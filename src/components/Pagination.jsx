@@ -5,7 +5,7 @@ function Pagination({ nextUrl, prevUrl, setUrl }) {
     <div className="mt-6 flex gap-4">
       {prevUrl && (
         <button
-          className="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600"
+          className="px-4 py-2 bg-red-500 rounded-lg text-white hover:transform hover:scale-105 transition-transform duration-200"
           onClick={() => setUrl(prevUrl)}
         >
           ⬅ Previous
@@ -13,7 +13,7 @@ function Pagination({ nextUrl, prevUrl, setUrl }) {
       )}
       {nextUrl && (
         <button
-          className="px-4 py-2 bg-yellow-500 text-black rounded-lg hover:bg-yellow-400"
+          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:transform hover:scale-105 transition-transform duration-200"
           onClick={() => setUrl(nextUrl)}
         >
           Next ➡

@@ -8,7 +8,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
-  const [url, setUrl] = useState("https://pokeapi.co/api/v2/pokemon?limit=10");
+  const [url, setUrl] = useState("https://pokeapi.co/api/v2/pokemon?limit=12");
 
   useEffect(() => {
     async function fetchData() {
@@ -37,18 +37,18 @@ export default function App() {
   }, [url]);
 
   return (
-    <div className="max-w-screen bg-gray-900 text-white flex flex-col items-center py-10">
-      <h1 className="text-4xl font-bold text-yellow-400 mb-6">
-        Pokémon Finder
-      </h1>
+    <div className="max-w-screen bg-gray-100 text-gray-800 flex flex-col items-center py-10">
+      <h1 className="text-4xl font-bold mb-6">Pokémon Finder</h1>
 
       {/* 🔍 Pass `setPokemon` to SearchBar */}
       <SearchBar setPokemon={setPokemon} />
 
       {loading ? (
-        <p className="text-xl text-gray-400 mt-5">Loading Pokémon...</p>
+        <p className="text-xl text-green-800 animate-bounce mt-5">
+          Loading Pokémon...
+        </p>
       ) : pokemon.length === 0 ? (
-        <p className="text-xl text-red-500 mt-5">Pokémon not found! ❌</p>
+        <p className="text-xl mt-5">Pokémon not found! ❌</p>
       ) : (
         <PokemonList pokemon={pokemon} />
       )}
