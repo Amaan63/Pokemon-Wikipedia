@@ -1,6 +1,7 @@
 import React from "react";
+import typeColors from "../utils/typeColors"; // Import the type colors
 
-function PokemonList({ pokemon }) {
+export default function PokemonList({ pokemon }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
       {pokemon.map((poke) => (
@@ -28,7 +29,9 @@ function PokemonList({ pokemon }) {
             {poke.types?.map((typeInfo) => (
               <span
                 key={typeInfo.type.name}
-                className="px-3 py-1 text-sm rounded-full bg-yellow-500 text-black"
+                className={`px-3 py-1 text-sm font-semibold rounded-full text-white ${
+                  typeColors[typeInfo.type.name] || "bg-gray-500"
+                }`}
               >
                 {typeInfo.type.name}
               </span>
@@ -39,4 +42,3 @@ function PokemonList({ pokemon }) {
     </div>
   );
 }
-export default PokemonList;
