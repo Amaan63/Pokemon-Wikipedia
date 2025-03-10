@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import PokemonList from "./components/PokemonList";
 import SearchBar from "./components/SearchBar";
 import Pagination from "./components/Pagination";
+import Footer from "./components/Footer";
 
 export default function App() {
   const [pokemon, setPokemon] = useState([]);
@@ -55,6 +56,7 @@ export default function App() {
 
       {/* Pagination Component */}
       <Pagination nextUrl={nextUrl} prevUrl={prevUrl} setUrl={setUrl} />
+      <Footer />
     </div>
   );
 }
