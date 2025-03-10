@@ -1,21 +1,18 @@
 import React from "react";
-import PokemonCard from "./PokemonCard";
 
-function PokemonList({ pokemon, search }) {
-  const filteredPokemon = pokemon.filter((poke) => poke.name.includes(search));
-
+export default function PokemonList({ pokemon }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-5">
-      {filteredPokemon.length > 0 ? (
-        filteredPokemon.map((poke) => (
-          <PokemonCard key={poke.id} pokemon={poke} />
-        ))
-      ) : (
-        <p className="text-gray-400 col-span-full text-center">
-          No Pokémon found
-        </p>
-      )}
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+      {pokemon.map((poke) => (
+        <div key={poke.id} className="bg-gray-800 p-4 rounded-lg text-center">
+          <img
+            src={poke.sprites.front_default}
+            alt={poke.name}
+            className="mx-auto"
+          />
+          <p className="text-xl font-bold">{poke.name.toUpperCase()}</p>
+        </div>
+      ))}
     </div>
   );
 }
-export default PokemonList;

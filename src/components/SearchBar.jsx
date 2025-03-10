@@ -1,13 +1,45 @@
-import React from "react";
+import React, { useState } from "react";
 
-function SearchBar({ setSearch }) {
+export default function SearchBar({ setPokemon }) {
+  const [search, setSearch] = useState("");
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+
+    if (!search.trim()) return; // Prevent empty search
+
+    try {
+      const res = await fetch(
+        `https://pokeapi.co/api/v2/pokemon/${search.toLowerCase()}`
+      );
+
+      if (!res.ok) {
+        setPokemon([]); // Clear previous results if not found
+        return;
+      }
+
+      const data = await res.json();
+      setPokemon([data]); // Set searched Pokémon as array
+    } catch (error) {
+      console.error("Error fetching Pokémon:", error);
+    }
+  };
+
   return (
-    <input
-      type="text"
-      placeholder="Search Pokémon..."
-      className="px-4 py-2 rounded-lg border border-gray-600 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-yellow-400 w-64"
-      onChange={(e) => setSearch(e.target.value.toLowerCase())}
-    />
+    <form onSubmit={handleSearch} className="flex gap-2 mb-5">
+      <input
+        type="text"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        placeholder="Search Pokémon..."
+        className="px-4 py-2 text-black bg-white rounded-lg outline-none"
+      />
+      <button
+        type="submit"
+        className="px-4 py-2 bg-yellow-500 text-black rounded-lg hover:bg-yellow-400"
+      >
+        Search
+      </button>
+    </form>
   );
 }
-export default SearchBar;
