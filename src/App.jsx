@@ -9,7 +9,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
-  const [url, setUrl] = useState("https://pokeapi.co/api/v2/pokemon?limit=12");
+  const [url, setUrl] = useState("https://pokeapi.co/api/v2/pokemon?limit=8");
 
   useEffect(() => {
     async function fetchData() {
@@ -38,7 +38,7 @@ export default function App() {
   }, [url]);
 
   return (
-    <div className="max-w-screen bg-gray-100 text-gray-800 flex flex-col items-center py-10">
+    <div className="w-full bg-gray-100 text-gray-800 flex flex-col items-center py-10">
       <h1 className="text-4xl font-bold mb-6">Pokémon Finder</h1>
 
       {/* 🔍 Pass `setPokemon` to SearchBar */}
