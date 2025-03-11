@@ -9,7 +9,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
-  const [url, setUrl] = useState("https://pokeapi.co/api/v2/pokemon?limit=8");
+  const [url, setUrl] = useState("https://pokeapi.co/api/v2/pokemon?limit=12");
 
   useEffect(() => {
     async function fetchData() {
