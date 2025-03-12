@@ -17,29 +17,37 @@ export default function SearchBar({ setPokemon }) {
 
       // Step 2: Fetch species details
       const speciesRes = await fetch(pokemonData.species.url);
+      if (!speciesRes.ok) throw new Error("Species data not found!");
       const speciesData = await speciesRes.json();
 
       // Step 3: Fetch evolution chain
       const evolutionRes = await fetch(speciesData.evolution_chain.url);
+      if (!evolutionRes.ok) throw new Error("Evolution data not found!");
       const evolutionData = await evolutionRes.json();
 
-      // Extract evolution chain
+      // Extract evolution chain using a queue (BFS)
       let chain = [];
-      let evoStage = evolutionData.chain;
-      while (evoStage) {
+      let evoQueue = [evolutionData.chain];
+
+      while (evoQueue.length > 0) {
+        const evoStage = evoQueue.shift();
         const evoName = evoStage.species.name;
+
         const evoDetails = await fetch(
           `https://pokeapi.co/api/v2/pokemon/${evoName}`
         );
-        const evoData = await evoDetails.json();
-        chain.push(evoData);
-        evoStage = evoStage.evolves_to.length ? evoStage.evolves_to[0] : null;
+        if (evoDetails.ok) {
+          const evoData = await evoDetails.json();
+          chain.push(evoData);
+        }
+
+        evoQueue.push(...evoStage.evolves_to); // Add next evolutions
       }
 
       // Set Pokémon and evolution details
-      setPokemon(chain); // Store both searched Pokémon and evolutions
+      setPokemon(chain.length ? chain : [pokemonData]); // Ensure at least the searched Pokémon is displayed
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error:", error.message);
       setPokemon([]); // Clear results on error
     }
   };
@@ -49,7 +57,7 @@ export default function SearchBar({ setPokemon }) {
       <input
         type="text"
         value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        onChange={(e) => setSearch(e.target.value.trimStart())}
         placeholder="Search Pokémon..."
         className="flex-1 px-4 py-2 text-black bg-white rounded-lg outline-none"
       />

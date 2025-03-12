@@ -1,5 +1,6 @@
 import React from "react";
-import typeColors from "../utils/typeColors"; // Import type colors
+// Import type colors
+import typeColors from "../utils/typeColors";
 
 export default function PokemonList({ pokemon }) {
   return (
