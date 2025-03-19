@@ -38,7 +38,7 @@ export default function App() {
   }, [url]);
 
   return (
-    <div className="w-full bg-gray-100 text-gray-800 flex flex-col items-center py-10">
+    <div className="w-full bg-gray-100 text-gray-800 flex flex-col items-center py-10 overflow-x-hidden">
       <h1 className="text-4xl font-bold mb-6">Pokémon Finder</h1>
 
       {/* 🔍 Pass `setPokemon` to SearchBar */}
