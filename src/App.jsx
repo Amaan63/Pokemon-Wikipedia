@@ -42,12 +42,16 @@ export default function App() {
       <h1 className="text-4xl font-bold mb-6">Pokémon Finder</h1>
 
       {/* 🔍 Pass `setPokemon` to SearchBar */}
-      <SearchBar setPokemon={setPokemon} />
+      <SearchBar setPokemon={setPokemon} setLoading={setLoading} />
 
       {loading ? (
-        <p className="text-xl text-green-800 animate-bounce mt-5">
-          Loading Pokémon...
-        </p>
+        // <p className="text-xl text-green-800 animate-bounce mt-5">
+        //   Loading Pokémon...
+        // </p>
+        <div className="flex justify-center items-center mt-5">
+          <div className="w-10 h-10 border-4 border-green-800 border-t-transparent rounded-full animate-spin"></div>
+          <p className="text-xl text-green-800 mt-2">Loading Pokémon...</p>
+        </div>
       ) : pokemon.length === 0 ? (
         <p className="text-xl mt-5">Pokémon not found! ❌</p>
       ) : (
