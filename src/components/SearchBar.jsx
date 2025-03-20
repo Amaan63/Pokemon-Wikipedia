@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 
-export default function SearchBar({ setPokemon }) {
+export default function SearchBar({ setPokemon, setLoading }) {
   const [search, setSearch] = useState("");
 
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!search.trim()) return;
+
+    setLoading(true); // Show loader when search starts
 
     try {
       // Step 1: Fetch Pokémon details
@@ -25,7 +27,7 @@ export default function SearchBar({ setPokemon }) {
       if (!evolutionRes.ok) throw new Error("Evolution data not found!");
       const evolutionData = await evolutionRes.json();
 
-      // Extract evolution chain using a queue (BFS)
+      // Extract evolution chain using BFS
       let chain = [];
       let evoQueue = [evolutionData.chain];
 
@@ -50,6 +52,8 @@ export default function SearchBar({ setPokemon }) {
       console.error("Error:", error.message);
       setPokemon([]); // Clear results on error
     }
+
+    setLoading(false); // Hide loader after fetching
   };
 
   return (
