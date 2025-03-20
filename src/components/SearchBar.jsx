@@ -1,33 +1,33 @@
 import React, { useState } from "react";
 
-export default function SearchBar({ setPokemon, setLoading }) {
+export default function SearchBar({
+  setPokemon,
+  setLoading,
+  setSearchedPokemon,
+}) {
   const [search, setSearch] = useState("");
 
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!search.trim()) return;
 
-    setLoading(true); // Show loader when search starts
+    setLoading(true);
+    setSearchedPokemon(null); // Reset highlight initially
 
     try {
-      // Step 1: Fetch Pokémon details
       const res = await fetch(
         `https://pokeapi.co/api/v2/pokemon/${search.toLowerCase()}`
       );
       if (!res.ok) throw new Error("Pokémon not found!");
       const pokemonData = await res.json();
 
-      // Step 2: Fetch species details
+      // Fetch species and evolution chain
       const speciesRes = await fetch(pokemonData.species.url);
-      if (!speciesRes.ok) throw new Error("Species data not found!");
       const speciesData = await speciesRes.json();
-
-      // Step 3: Fetch evolution chain
       const evolutionRes = await fetch(speciesData.evolution_chain.url);
-      if (!evolutionRes.ok) throw new Error("Evolution data not found!");
       const evolutionData = await evolutionRes.json();
 
-      // Extract evolution chain using BFS
+      // Extract evolution chain
       let chain = [];
       let evoQueue = [evolutionData.chain];
 
@@ -43,17 +43,17 @@ export default function SearchBar({ setPokemon, setLoading }) {
           chain.push(evoData);
         }
 
-        evoQueue.push(...evoStage.evolves_to); // Add next evolutions
+        evoQueue.push(...evoStage.evolves_to);
       }
 
-      // Set Pokémon and evolution details
-      setPokemon(chain.length ? chain : [pokemonData]); // Ensure at least the searched Pokémon is displayed
+      setSearchedPokemon(pokemonData.name); // Store searched Pokémon's name
+      setPokemon(chain.length ? chain : [pokemonData]);
     } catch (error) {
       console.error("Error:", error.message);
-      setPokemon([]); // Clear results on error
+      setPokemon([]);
     }
 
-    setLoading(false); // Hide loader after fetching
+    setLoading(false);
   };
 
   return (

@@ -9,6 +9,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
+  const [searchedPokemon, setSearchedPokemon] = useState(null); // Track searched Pokémon
   const [url, setUrl] = useState("https://pokeapi.co/api/v2/pokemon?limit=12");
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function App() {
         setPokemon(pokemonData);
         setNextUrl(data.next);
         setPrevUrl(data.previous);
+        setSearchedPokemon(null); // Reset highlight on pagination
       } catch (error) {
         console.error("Error fetching Pokémon:", error);
       }
@@ -41,13 +43,14 @@ export default function App() {
     <div className="w-full bg-gray-100 text-gray-800 flex flex-col items-center py-10 overflow-x-hidden">
       <h1 className="text-4xl font-bold mb-6">Pokémon Finder</h1>
 
-      {/* 🔍 Pass `setPokemon` to SearchBar */}
-      <SearchBar setPokemon={setPokemon} setLoading={setLoading} />
+      {/* Pass `setPokemon` and `setSearchedPokemon` to SearchBar */}
+      <SearchBar
+        setPokemon={setPokemon}
+        setLoading={setLoading}
+        setSearchedPokemon={setSearchedPokemon}
+      />
 
       {loading ? (
-        // <p className="text-xl text-green-800 animate-bounce mt-5">
-        //   Loading Pokémon...
-        // </p>
         <div className="flex justify-center items-center mt-5">
           <div className="w-10 h-10 border-4 border-green-800 border-t-transparent rounded-full animate-spin"></div>
           <p className="text-xl text-green-800 mt-2">Loading Pokémon...</p>
@@ -55,7 +58,7 @@ export default function App() {
       ) : pokemon.length === 0 ? (
         <p className="text-xl mt-5">Pokémon not found! ❌</p>
       ) : (
-        <PokemonList pokemon={pokemon} />
+        <PokemonList pokemon={pokemon} searchedPokemon={searchedPokemon} />
       )}
 
       {/* Pagination Component */}
