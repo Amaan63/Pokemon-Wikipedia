@@ -3,6 +3,7 @@ import PokemonList from "./components/PokemonList";
 import SearchBar from "./components/SearchBar";
 import Pagination from "./components/Pagination";
 import Footer from "./components/Footer";
+import Loader from "./components/Loader";
 
 export default function App() {
   const [pokemon, setPokemon] = useState([]);
@@ -51,10 +52,7 @@ export default function App() {
       />
 
       {loading ? (
-        <div className="flex justify-center items-center mt-5">
-          <div className="w-10 h-10 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-xl text-emerald-800 mt-2">Loading Pokémon...</p>
-        </div>
+        <Loader />
       ) : pokemon.length === 0 ? (
         <p className="text-xl mt-5">Pokémon not found! ❌</p>
       ) : (
