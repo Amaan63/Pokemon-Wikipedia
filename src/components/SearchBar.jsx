@@ -12,44 +12,70 @@ export default function SearchBar({
     if (!search.trim()) return;
 
     setLoading(true);
-    setSearchedPokemon(null); // Reset highlight initially
+    setSearchedPokemon(null);
 
     try {
-      const res = await fetch(
-        `https://pokeapi.co/api/v2/pokemon/${search.toLowerCase()}`
+      const searchName = search.toLowerCase();
+
+      // Fetch searched Pokémon
+      const searchedRes = await fetch(
+        `https://pokeapi.co/api/v2/pokemon/${searchName}`
       );
-      if (!res.ok) throw new Error("Pokémon not found!");
-      const pokemonData = await res.json();
+      if (!searchedRes.ok) throw new Error("Pokémon not found");
+      const searchedData = await searchedRes.json();
+
+      // Set this as the one to highlight (base name only, like "charizard")
+      setSearchedPokemon(searchedData.name);
 
       // Fetch species and evolution chain
-      const speciesRes = await fetch(pokemonData.species.url);
+      const speciesRes = await fetch(searchedData.species.url);
       const speciesData = await speciesRes.json();
+
       const evolutionRes = await fetch(speciesData.evolution_chain.url);
       const evolutionData = await evolutionRes.json();
 
-      // Extract evolution chain
-      let chain = [];
-      let evoQueue = [evolutionData.chain];
+      // Process evolution chain recursively
+      const extractEvolutions = (node) => {
+        let names = [node.species.name];
+        node.evolves_to.forEach((evo) => {
+          names = names.concat(extractEvolutions(evo));
+        });
+        return names;
+      };
 
-      while (evoQueue.length > 0) {
-        const evoStage = evoQueue.shift();
-        const evoName = evoStage.species.name;
+      const evolutionNames = extractEvolutions(evolutionData.chain);
 
-        const evoDetails = await fetch(
-          `https://pokeapi.co/api/v2/pokemon/${evoName}`
+      const allForms = [];
+
+      for (const name of evolutionNames) {
+        // Fetch base form
+        const baseRes = await fetch(
+          `https://pokeapi.co/api/v2/pokemon/${name}`
         );
-        if (evoDetails.ok) {
-          const evoData = await evoDetails.json();
-          chain.push(evoData);
-        }
+        if (!baseRes.ok) continue;
+        const baseData = await baseRes.json();
+        allForms.push(baseData);
 
-        evoQueue.push(...evoStage.evolves_to);
+        // Fetch species to get mega forms
+        const speciesRes = await fetch(baseData.species.url);
+        const speciesData = await speciesRes.json();
+
+        const megaVarieties = speciesData.varieties.filter((v) =>
+          v.pokemon.name.includes("mega")
+        );
+
+        // Fetch all mega forms
+        for (const mega of megaVarieties) {
+          const megaRes = await fetch(mega.pokemon.url);
+          if (!megaRes.ok) continue;
+          const megaData = await megaRes.json();
+          allForms.push(megaData);
+        }
       }
 
-      setSearchedPokemon(pokemonData.name); // Store searched Pokémon's name
-      setPokemon(chain.length ? chain : [pokemonData]);
+      setPokemon(allForms);
     } catch (error) {
-      console.error("Error:", error.message);
+      console.error("Search Error:", error.message);
       setPokemon([]);
     }
 
