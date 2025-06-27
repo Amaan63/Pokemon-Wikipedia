@@ -11,7 +11,7 @@ export default function App() {
   const [nextUrl, setNextUrl] = useState(null);
   const [prevUrl, setPrevUrl] = useState(null);
   const [searchedPokemon, setSearchedPokemon] = useState(null); // Track searched Pokémon
-  const [url, setUrl] = useState("https://pokeapi.co/api/v2/pokemon?limit=12");
+  const [url, setUrl] = useState("https://pokeapi.co/api/v2/pokemon?limit=14");
 
   useEffect(() => {
     async function fetchData() {
@@ -20,17 +20,47 @@ export default function App() {
         const res = await fetch(url);
         const data = await res.json();
 
-        const pokemonData = await Promise.all(
+        const allPokemon = await Promise.all(
           data.results.map(async (poke) => {
-            const res = await fetch(poke.url);
-            return await res.json();
+            try {
+              // Fetch base Pokémon and species in parallel
+              const [baseRes, speciesRes] = await Promise.all([
+                fetch(poke.url),
+                fetch(`https://pokeapi.co/api/v2/pokemon-species/${poke.name}`),
+              ]);
+              const baseData = await baseRes.json();
+              const speciesData = await speciesRes.json();
+
+              // Filter mega forms
+              const megaForms = speciesData.varieties.filter((v) =>
+                v.pokemon.name.includes("mega")
+              );
+
+              // Fetch mega Pokémon in parallel
+              const megaDataList = await Promise.all(
+                megaForms.map(async (mega) => {
+                  const res = await fetch(mega.pokemon.url);
+                  if (!res.ok) return null;
+                  return await res.json();
+                })
+              );
+
+              // Combine base + mega forms
+              return [baseData, ...megaDataList.filter(Boolean)];
+            } catch (err) {
+              console.error("Error with Pokémon:", poke.name, err);
+              return []; // Skip this one if error
+            }
           })
         );
 
-        setPokemon(pokemonData);
+        // Flatten nested arrays
+        const flattened = allPokemon.flat();
+
+        setPokemon(flattened);
         setNextUrl(data.next);
         setPrevUrl(data.previous);
-        setSearchedPokemon(null); // Reset highlight on pagination
+        setSearchedPokemon(null);
       } catch (error) {
         console.error("Error fetching Pokémon:", error);
       }

@@ -1,7 +1,7 @@
 import React from "react";
 import typeColors from "../utils/typeColors";
 
-export default function PokemonList({ pokemon, searchedPokemon }) {
+const PokemonList = ({ pokemon, searchedPokemon }) => {
   return (
     <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 px-4">
       {pokemon.map((poke) => (
@@ -31,7 +31,9 @@ export default function PokemonList({ pokemon, searchedPokemon }) {
               poke.name === searchedPokemon ? "text-yellow-500" : ""
             }`}
           >
-            {poke.name}
+            {poke.name.includes("-mega")
+              ? "Mega " + poke.name.replace("-mega", "")
+              : poke.name}
           </h2>
 
           {/* 🔥 Pokémon Type Badges */}
@@ -52,3 +54,5 @@ export default function PokemonList({ pokemon, searchedPokemon }) {
     </div>
   );
 }
+
+export default PokemonList;
