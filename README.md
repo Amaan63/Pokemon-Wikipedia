@@ -40,3 +40,11 @@ Searches and highlights Pokémon by name.
 ![Search Bar](./OutputScreenShots/SearchBar.png)
 
 ---
+
+### 📑 Pokémon Additional Information
+
+Shows Pokemon additional Information and its shiny form
+
+![Search Bar](./OutputScreenShots/Pokemon-Modal.png)
+
+---
